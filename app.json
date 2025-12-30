@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "audiana",
-    "slug": "audiana",
+    "name": "native-convex-auth-starter",
+    "slug": "native-convex-auth-starter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "audiana",
+    "scheme": "native-convex-auth-starter",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
