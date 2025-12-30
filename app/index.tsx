@@ -1,5 +1,3 @@
-import '@/styles/global.css'
-
 import { api } from '@/convex/_generated/api'
 import { useQuery } from 'convex/react'
 import { Text, View } from 'react-native'

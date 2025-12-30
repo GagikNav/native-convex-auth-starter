@@ -1,3 +1,5 @@
+import '@/styles/global.css'
+import { PortalHost } from '@rn-primitives/portal'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { Stack } from 'expo-router'
 
@@ -11,6 +13,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name='index' />
       </Stack>
+      <PortalHost />
     </ConvexProvider>
   )
 }
