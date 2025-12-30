@@ -2,6 +2,16 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
   "language": "en",
-  "words": ["nativewind", "better-auth", "convex"],
-  "ignorePaths": ["**/node_modules/**", "**/dist/**", "**/build/**", ".**"],
+  "words": [
+    "better-auth",
+    "convex",
+    "lightningcss",
+    "nativewind"
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    ".**"
+  ]
 }
