@@ -191,3 +191,43 @@ When adding features:
 - Backend logic? → Add to `convex/`
 - Shared UI component? → Create `components/` directory
 - Utility function? → Add to `lib/utils.ts` or new file in `lib/`
+
+## LLM-generated planning & execution files (docs/llm)
+
+We use LLMs to draft planning, todo, memory, and execution artifacts in Markdown. To keep machine-generated artifacts separate from hand-authored documentation, follow these conventions:
+
+- **Location**:
+  - Put all LLM-generated files under `docs/llm/`.
+  - For each task or feature, create a dedicated subfolder: `docs/llm/<task-slug>/` (e.g., `docs/llm/authentication-signin/`).
+  - Save canonical artifacts (PRDs, ADRs, final specs) under `docs/<task-slug>/` (same slug, separate root) so LLM drafts are clearly distinguished from the project's canonical docs.
+
+- **File Types & Names** (recommended):
+  - Planning: `planning.md`
+  - TODO / Execution list: `todo.md`
+  - Memory / Context: `memory.md`
+  - Execution log / Runbook: `execution.md`
+  - PRD (canonical): `prd.md` → store in `docs/<task-slug>/` (not `docs/llm`)
+  - ADR (canonical): `adr.md` → store in `docs/<task-slug>/`
+
+- **Frontmatter / Metadata**: Add a small YAML header to LLM-generated files so reviewers / tools can detect them automatically. Example:
+
+```yaml
+---
+title: 'Sign-in Flow - Planning'
+task: 'authentication-signin'
+generated_by: 'llm'
+created_at: '2026-01-04'
+---
+```
+
+- **Workflow**:
+  1. Use an LLM to draft the document with a focused prompt.
+  2. Save the draft to `docs/llm/<task-slug>/{planning,todo,memory,execution}.md`.
+  3. Review, refine, and, if accepted as canonical, copy or move the final PRD/ADR into `docs/<task-slug>/` (or create a separate PR that references the draft).
+  4. Always commit LLM drafts so history is preserved.
+
+- **Review notes**:
+  - LLM files are drafts and must be reviewed by a human before being treated as conclusive.
+  - Use `generated_by: llm` metadata to filter or exclude LLM artifacts from automated checks if needed.
+
+This structure keeps LLM outputs discoverable and separated from hand-authored, canonical documentation while maintaining an audit trail and clear migration path from draft → canonical PRD/ADR.
