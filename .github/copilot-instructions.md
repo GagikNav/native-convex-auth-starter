@@ -5,6 +5,7 @@
 This is a React Native mobile app built with Expo SDK 54 + Convex backend. The stack:
 
 - **Frontend**: React Native with Expo Router (file-based routing)
+- **UI Components**: React Native Reusables (https://reactnativereusables.com/) - Priority component library
 - **Styling**: NativeWind (Tailwind CSS for React Native) + CSS variables for theming
 - **State Management**: Zustand (client-side state) + Convex queries (server-state)
 - **Backend**: Convex (reactive serverless backend with real-time subscriptions)
@@ -117,6 +118,46 @@ export { useMyStore } from './myStore'
 - Use `persist` middleware for state that should survive app restarts
 - Use shallow selectors to prevent unnecessary rerenders
 - Document store purpose and usage in JSDoc comments
+
+## UI Component Development
+
+### React Native Reusables Priority
+
+**Always prioritize React Native Reusables** (https://reactnativereusables.com/) for UI components:
+
+1. **Check availability**: Visit https://reactnativereusables.com/ to see if the component exists
+2. **Install via CLI**: `npx @react-native-reusables/cli@latest add <component-name>`
+3. **Use with NativeWind**: All components are built with Tailwind CSS compatibility
+4. **Customize with props**: Most components accept extensive customization via props
+
+**Available components include**:
+- Buttons, Inputs, Dialogs, Sheets, Cards
+- Navigation, Forms, Typography, Layout
+- Data display, Feedback, Overlays
+
+**Component usage pattern**:
+```typescript
+// ✅ PREFERRED - React Native Reusables
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Dialog } from '@/components/ui/dialog'
+
+function LoginForm() {
+  return (
+    <View className="p-4 space-y-4">
+      <Input placeholder="Email" className="w-full" />
+      <Button onPress={handleLogin} className="w-full">
+        Login
+      </Button>
+    </View>
+  )
+}
+```
+
+**Only create custom components when**:
+- React Native Reusables doesn't provide the specific component
+- Highly specialized business logic is required
+- Existing components need significant architectural changes
 
 ## Critical Developer Workflows
 
@@ -290,7 +331,9 @@ When adding features:
 - New screen? → Add to `app/`
 - Backend logic? → Add to `convex/`
 - Client-side state? → Add to `lib/stores/`
-- Shared UI component? → Create `components/` directory
+- UI component needed? → **Always check React Native Reusables first** (https://reactnativereusables.com/)
+- Install React Native Reusables components: `npx @react-native-reusables/cli@latest add <component>`
+- Custom component? → Create `components/` directory only when React Native Reusables doesn't provide it
 - Utility function? → Add to `lib/utils.ts` or new file in `lib/`
 
 ## LLM-generated planning & execution files (docs/llm)
