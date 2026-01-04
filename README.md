@@ -52,12 +52,12 @@ npm install
 
 Using Bun:
 ```bash
-bunx convex dev
+bun convex:dev
 ```
 
 Or using npm:
 ```bash
-npx convex dev
+npm run convex:dev
 ```
 
 3. Follow the prompts to create a new project or connect to an existing one
@@ -81,12 +81,12 @@ EXPO_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
 > **Note:** The `EXPO_PUBLIC_` prefix is required for Expo to expose the variable to your app.
 
 You can find your deployment URL in:
-- The terminal output after running `bunx convex dev`
+- The terminal output after running `bun convex:dev`
 - Your [Convex Dashboard](https://dashboard.convex.dev)
 
 ### 4. Start the Development Server
 
-In a **new terminal** (keep `bunx convex dev` running), start the Expo development server:
+In a **new terminal** (keep `bun convex:dev` running), start the Expo development server:
 
 Using Bun:
 ```bash
@@ -197,12 +197,12 @@ https://dashboard.convex.dev
 - `bun android` - Run on Android emulator/device
 - `bun ios` - Run on iOS simulator/device
 - `bun web` - Run in web browser
-- `bunx convex dev` - Start Convex development server
+- `bun convex:dev` - Start Convex development server
 - `bun reset-project` - Move example code and start fresh
 
 ## Development Workflow
 
-1. **Keep Convex running**: Always have `bunx convex dev` running in one terminal
+1. **Keep Convex running**: Always have `bun convex:dev` running in one terminal
 2. **Run Expo**: Start `bun start` in another terminal
 3. **Make changes**: Edit files in `app/` (frontend) or `convex/` (backend)
 4. **See updates**: Changes hot-reload automatically in both Convex and Expo
