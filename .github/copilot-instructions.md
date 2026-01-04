@@ -6,6 +6,7 @@ This is a React Native mobile app built with Expo SDK 54 + Convex backend. The s
 
 - **Frontend**: React Native with Expo Router (file-based routing)
 - **Styling**: NativeWind (Tailwind CSS for React Native) + CSS variables for theming
+- **State Management**: Zustand (client-side state) + Convex queries (server-state)
 - **Backend**: Convex (reactive serverless backend with real-time subscriptions)
 - **Type Safety**: TypeScript with strict mode enabled
 
@@ -18,6 +19,104 @@ This is a React Native mobile app built with Expo SDK 54 + Convex backend. The s
 **Styling pattern**: Combines NativeWind's `className` prop with CSS variables defined in [styles/global.css](styles/global.css). Always use `className` for styling, not inline `style` unless positioning is required.
 
 **Path aliases**: `@/*` maps to root directory. Use `@/convex/_generated/api` for Convex imports, `@/styles/global.css` for styles.
+
+**State management separation**: Zustand handles client-side state (theme, UI, auth tokens, preferences). Convex handles server-state (database records, real-time data). Never duplicate server data in Zustand unless there's a specific caching/performance reason.
+
+## State Management with Zustand
+
+### When to Use Zustand vs Convex
+
+**Use Zustand for:**
+- Client-only state (theme, UI visibility, form state)
+- Authentication tokens and session state
+- User preferences and settings
+- Computed/filtered views that don't need server reactivity
+- Cross-component communication without prop drilling
+
+**Use Convex for:**
+- Database records and persistent data
+- Real-time synchronized state across users
+- Server-side business logic and validation
+- Data that needs to be shared between sessions/devices
+
+**✅ Good pattern - Complementary usage:**
+```typescript
+// Convex for server data (reactive)
+const messages = useQuery(api.messages.list)
+// Zustand for client UI state
+const { filterBy } = useMessageFilters()
+const filtered = messages?.filter(m => m.type === filterBy)
+```
+
+**❌ Bad pattern - Duplicating server data:**
+```typescript
+const messages = useQuery(api.messages.list)
+const { setMessages } = useMessageStore() // Don't do this
+useEffect(() => setMessages(messages), [messages])
+```
+
+### Using Zustand Stores
+
+Import stores from `@/lib/stores`:
+
+```typescript
+import { useThemeStore, useAuthStore } from '@/lib/stores'
+
+function MyComponent() {
+  // Subscribe to entire store
+  const { theme, setTheme } = useThemeStore()
+
+  // Subscribe to specific values (prevents unnecessary rerenders)
+  const theme = useThemeStore(state => state.theme)
+  const setTheme = useThemeStore(state => state.setTheme)
+}
+```
+
+**Available stores:**
+- `useThemeStore` - Theme preferences (light/dark/system) with AsyncStorage persistence
+- `useAuthStore` - Authentication state (user, isAuthenticated, login/logout)
+
+### Creating New Stores
+
+Add new stores to `lib/stores/` directory:
+
+```typescript
+// lib/stores/myStore.ts
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+interface MyState {
+  count: number
+  increment: () => void
+}
+
+export const useMyStore = create<MyState>()(
+  persist(
+    (set) => ({
+      count: 0,
+      increment: () => set((state) => ({ count: state.count + 1 })),
+    }),
+    {
+      name: 'my-storage', // unique name for AsyncStorage
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+)
+```
+
+Then export from `lib/stores/index.ts`:
+
+```typescript
+export { useMyStore } from './myStore'
+```
+
+**Best practices:**
+- Keep stores focused (one concern per store)
+- Use TypeScript interfaces for type safety
+- Use `persist` middleware for state that should survive app restarts
+- Use shallow selectors to prevent unnecessary rerenders
+- Document store purpose and usage in JSDoc comments
 
 ## Critical Developer Workflows
 
@@ -182,6 +281,7 @@ app/           - Expo Router screens (each file = route)
 convex/        - Backend functions (queries, mutations, actions)
 styles/        - Global CSS with theme variables
 lib/           - Shared utilities (cn helper, theme utils)
+  stores/      - Zustand stores for client-side state management
 assets/        - Static files (images, fonts)
 ```
 
@@ -189,6 +289,7 @@ When adding features:
 
 - New screen? → Add to `app/`
 - Backend logic? → Add to `convex/`
+- Client-side state? → Add to `lib/stores/`
 - Shared UI component? → Create `components/` directory
 - Utility function? → Add to `lib/utils.ts` or new file in `lib/`
 
