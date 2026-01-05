@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Text } from '@/components/ui/text'
-import { useAuthStore } from '@/lib/stores'
+import { authClient } from '@/lib/auth-client'
 import { Link, useRouter } from 'expo-router'
 import { useState } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 
 export default function RegisterScreen() {
   const [name, setName] = useState('')
@@ -15,27 +15,35 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { login } = useAuthStore()
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
-      // In a real app, show an error toast or message
-      alert("Passwords don't match")
+      Alert.alert('Error', "Passwords don't match")
       return
     }
 
     setIsLoading(true)
 
-    // Mock registration - replace with Better Auth integration
-    setTimeout(() => {
-      login({
-        id: '1',
-        name: name,
-        email: email,
+    try {
+      const { error } = await authClient.signUp.email({
+        email,
+        password,
+        name,
       })
+
+      if (error) {
+        console.log("error", error);
+
+        Alert.alert('Registration Failed', error.message)
+      } else {
+        router.replace('/')
+      }
+    } catch (err) {
+      Alert.alert('Error', 'An unexpected error occurred')
+      console.error(err)
+    } finally {
       setIsLoading(false)
-      router.replace('/')
-    }, 1000)
+    }
   }
 
   return (

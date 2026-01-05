@@ -1,22 +1,32 @@
 import { Button } from '@/components/ui/button'
 import { api } from '@/convex/_generated/api'
-import { useAuthStore } from '@/lib/stores'
+import { authClient } from '@/lib/auth-client'
 import '@/styles/global.css'
 import { useQuery } from 'convex/react'
 import { Redirect, useRouter } from 'expo-router'
-import { Text, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
+
 export default function Index() {
   const health = useQuery(api.health.check)
   const router = useRouter()
-  const { isAuthenticated, logout, user } = useAuthStore()
+  const { data: session, isPending } = authClient.useSession()
 
-  // Use Redirect component instead of useEffect for navigation
-  if (!isAuthenticated) {
+  // Show loading while session is being fetched
+  if (isPending) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  // Redirect to login if no session
+  if (!session) {
     return <Redirect href="/(auth)/login" />
   }
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await authClient.signOut()
     router.replace('/(auth)/login')
   }
 
@@ -34,13 +44,13 @@ export default function Index() {
           </Text>
         </View>
 
-        {user && (
+        {session.user && (
           <View className="items-center space-y-2 mt-10">
             <Text className="text-lg text-foreground">
-              Welcome, {user.name}!
+              Welcome, {session.user.name}!
             </Text>
             <Text className="text-sm text-muted-foreground">
-              {user.email}
+              {session.user.email}
             </Text>
           </View>
         )}

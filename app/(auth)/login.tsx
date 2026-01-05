@@ -3,31 +3,37 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Text } from '@/components/ui/text'
-import { useAuthStore } from '@/lib/stores'
+import { authClient } from '@/lib/auth-client'
 import { Link, useRouter } from 'expo-router'
 import { useState } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { login } = useAuthStore()
 
   const handleLogin = async () => {
     setIsLoading(true)
 
-    // Mock authentication - replace with Better Auth integration
-    setTimeout(() => {
-      login({
-        id: '1',
-        name: 'Test User',
-        email: email,
+    try {
+      const { error } = await authClient.signIn.email({
+        email,
+        password,
       })
+
+      if (error) {
+        Alert.alert('Login Failed', error.message)
+      } else {
+        router.replace('/')
+      }
+    } catch (err) {
+      Alert.alert('Error', 'An unexpected error occurred')
+      console.error(err)
+    } finally {
       setIsLoading(false)
-      router.replace('/')
-    }, 1000)
+    }
   }
 
   return (

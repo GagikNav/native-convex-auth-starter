@@ -1,6 +1,8 @@
 
+import { authClient } from '@/lib/auth-client'
+import { ConvexBetterAuthProvider } from '@convex-dev/better-auth/react'
 import { PortalHost } from '@rn-primitives/portal'
-import { ConvexProvider, ConvexReactClient } from 'convex/react'
+import { ConvexReactClient } from 'convex/react'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -13,13 +15,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="auto" />
-      <ConvexProvider client={convex}>
+      <ConvexBetterAuthProvider client={convex} authClient={authClient}>
         <Stack>
           <Stack.Screen name='index' />
           <Stack.Screen name='(auth)' options={{ headerShown: false }} />
         </Stack>
         <PortalHost />
-      </ConvexProvider>
+      </ConvexBetterAuthProvider>
     </SafeAreaProvider>
   )
 }
